@@ -479,7 +479,7 @@
     { id: 'bol', nome: 'Boletim', sub: '00:00' },
     { id: 'sai', nome: 'Saída', sub: '07:00 às 12:00' },
     { id: 'pro', nome: 'Produção', sub: '00:00 às 12:00' },
-    { id: 'fis', nome: 'Físico', sub: 'às 12:00' }
+    { id: 'fis', nome: 'Estoque real', sub: 'às 12:00' }
   ];
   EST_PRODUTOS.forEach(function (p) {
     EST_CAMPOS.forEach(function (c) { FIELDS.push('est_' + p.id + '_' + c.id); });
@@ -695,7 +695,7 @@
     if (d.estoque.length) {
       L.push('', '*CONFERÊNCIA DE ESTOQUE – FÍSICO X BOLETIM*');
       d.estoque.forEach(function (e) {
-        L.push('*' + e.nome + '*: esperado ' + fmtT(e.esp) + ' t | físico ' + fmtT(e.fis) + ' t' +
+        L.push('*' + e.nome + '*: esperado ' + fmtT(e.esp) + ' t | estoque real ' + fmtT(e.fis) + ' t' +
           (e.dif === null ? '' : ' | ' + fmtDif(e.dif) + ' t (' + e.sit.txt.toLowerCase() + ')'));
       });
     }
@@ -886,7 +886,7 @@
       var COR_SIT = { menor: ['#FCEBE7', '#C2412D'], maior: ['#E7F0FA', '#2B6CB0'], ok: [C.soft, C.green], '': ['#F1F3F1', C.muted] };
       y = secao(ctx, y, 'CONFERÊNCIA DE ESTOQUE – FÍSICO X BOLETIM');
       var cols = [['Produto', '', 104], ['Boletim', '00:00', 78], ['Saída', '07–12h', 70], ['Produção', '00–12h', 86],
-        ['Esperado', 'calculado', 88], ['Físico', '12:00', 70], ['Diferença', '', 104]];
+        ['Esperado', 'calculado', 88], ['Estoque real', '12:00', 100], ['Diferença', '', 104]];
       var tW = cols.reduce(function (s, c) { return s + c[2]; }, 0);
       var hh = 48, rh = 46, tH = hh + d.estoque.length * rh;
       var cardH = Math.max(tH + 50, 250);
@@ -925,17 +925,17 @@
       ctx.textAlign = 'left';
       // Legenda da situação embaixo da tabela
       ctx.font = F(600, 13); ctx.fillStyle = C.muted;
-      ctx.fillText('▼ menor físico   ▲ maior físico   (diferença = físico − esperado)', tx0 + 4, ty0 + tH + 10);
+      ctx.fillText('▼ menor físico   ▲ maior físico   (diferença = estoque real − esperado)', tx0 + 4, ty0 + tH + 10);
 
       // Gráfico Esperado x Físico
       var gx0 = tx0 + tW + 24, gW = P + inner - 14 - gx0;
       var gTop = y + 40, gBase = y + cardH - 34, gL = gx0 + 38, gWW = gW - 38;
       ctx.font = F(600, 13);
       ctx.fillStyle = '#A9B4AE'; rr(ctx, gx0, y + 14, 13, 13, 3); ctx.fill();
-      ctx.fillStyle = C.muted; ctx.fillText('Esperado', gx0 + 19, y + 13);
-      var lx = gx0 + 19 + ctx.measureText('Esperado').width + 14;
+      ctx.fillStyle = C.muted; ctx.fillText('Boletim', gx0 + 19, y + 13);
+      var lx = gx0 + 19 + ctx.measureText('Boletim').width + 14;
       ctx.fillStyle = C.green; rr(ctx, lx, y + 14, 13, 13, 3); ctx.fill();
-      ctx.fillStyle = C.muted; ctx.fillText('Físico', lx + 19, y + 13);
+      ctx.fillStyle = C.muted; ctx.fillText('Estoque real', lx + 19, y + 13);
       var maxV = 0;
       d.estoque.forEach(function (e) { maxV = Math.max(maxV, e.esp || 0, e.fis || 0); });
       var passo = maxV > 1000 ? 500 : maxV > 400 ? 200 : 100;
